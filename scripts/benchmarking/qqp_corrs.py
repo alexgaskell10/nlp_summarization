@@ -25,7 +25,6 @@ def get_scores(nrows, metrics=None):
     start_time = time()
     if not metrics:
         metrics = ['mover-1', 'mover-2', 'bleurt', 'bertscore', 'bartscore', 'rouge1', 'rouge2', 'rougeLsum',]
-        # metrics = ['bertscore',]
     for m in tqdm(metrics):
         if m.startswith('rouge'):
             scorer = rouge_scorer.RougeScorer([met for met in metrics if met.startswith('rouge')], use_stemmer=True)
@@ -41,7 +40,7 @@ def get_scores(nrows, metrics=None):
             scorer = score.BleurtScorer(checkpoint)
             scores = scorer.score(df.question1, df.question2, batch_size=50)
         elif m.startswith('mover'):
-            # Truncate long questions else moverscore gets oom
+            # Truncate long questions else moverscore gets OOM
             q1 = df['question1'].apply(lambda s: s[:300]).tolist()
             q2 = df['question2'].apply(lambda s: s[:300]).tolist()
             idf_dict_hyp = get_idf_dict(q1)
@@ -57,7 +56,6 @@ def get_scores(nrows, metrics=None):
         print('\n'*10, m, '\n'*10)
         df.to_csv(QQP_OUT_PATH)
 
-    # print(time()-start_time)
 
 def get_corrs():
     df = pd.read_csv(QQP_OUT_PATH)

@@ -1,4 +1,3 @@
-from pytorch_transformers import *
 import torch
 from torch.autograd import Variable
 import numpy as np

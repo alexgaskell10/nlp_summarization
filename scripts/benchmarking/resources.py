@@ -26,13 +26,11 @@ RUNS_DIR = os.path.join(BASE_DIR, 'runs')
 MODEL_WEIGHT_DIR = os.path.join(BASE_DIR,'trained_models')
 
 import sys
-BLEURT_DIR = os.path.join(ROOT_DIR, '../../bleurt')     # TODO: FIX BLEURT INSTALL
+BLEURT_DIR = os.path.join(ROOT_DIR, '../../bleurt')
 sys.path.append(BLEURT_DIR)
 
-QQP_DATA_PATH = '/vol/bitbucket/aeg19/datasets/quora_question_pairs/train.csv'
-QQP_OUT_PATH = '/vol/bitbucket/aeg19/datasets/quora_question_pairs/out.csv'
+QQP_DATA_PATH = os.path.join(ROOT_DIR, 'qqp_train.csv')
+QQP_OUT_PATH = os.path.join(ROOT_DIR, 'qqp_output.csv')
 
-# # Output data
-# OUT_DATA_DIR
 
 

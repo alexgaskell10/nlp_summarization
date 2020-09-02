@@ -5,7 +5,6 @@ from nltk import PorterStemmer, word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 from tqdm import tqdm
 from scipy.stats import spearmanr, pearsonr, kendalltau
-from pytorch_transformers import *
 import argparse
 
 from learned_eval.scorer.data_helper.json_reader import read_sorted_scores, read_articles, read_processed_scores, read_scores
@@ -155,24 +154,6 @@ def evaluate_metric(metric, stem, remove_stop, prompt='overall'):
     return ranks_file_path
 
 
-def run_loop():
-    model_types = [
-        "bert-large-uncased",
-        "roberta-large-openai-detector",
-        "distilroberta-base",
-        "albert-xxlarge-v2",
-        "roberta-large",        
-        "roberta-base",
-        "albert-xlarge-v1",
-
-        # "bart-large-mnli",
-        # "bart-large-xsum",
-    ]
-    for i, MODEL_TYPE in enumerate(model_types):
-        print(f"\nLap {i+1} / {len(model_types)}     |     model: {MODEL_TYPE}")
-        metric_scores_file = evaluate_metric(metric,stem,remove_stop,prompt)
-
-
 def parse_args():
     ap = argparse.ArgumentParser("arguments for summary sampler")
     ap.add_argument('-m','--metric',type=str,default='ROUGE-1-F',choices=['ROUGE-1-F', 'ROUGE-2-F', 'ROUGE-L-F', 'bert-human', 'bert-score', 'bart-score', 
@@ -198,9 +179,3 @@ if __name__ == '__main__':
 
     sys.argv = [sys.argv[0]]
     metric_scores_file = evaluate_metric(metric, stem, remove_stop, prompt)
-
-'''
-. ~/.envs/rl_sum/bin/activate
-python get_corrs.py -m ROUGE-L-F
-python get_corrs.py -m bert-score
-'''
