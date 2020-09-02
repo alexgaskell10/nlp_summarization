@@ -1,0 +1,24 @@
+torch==1.5.1+cu101 
+torchvision==0.6.1+cu101 
+-f https://download.pytorch.org/whl/torch_stable.html
+tensorflow==2.1.0
+
+# bertscore
+tqdm>=4.31.1
+transformers>=2.0.0
+matplotlib
+pandas>=1.0.1
+numpy
+
+# g-rouge
+absl-py
+nltk
+six>=1.14
+rouge-score
+
+# hf nlp & tokenizers
+nlp
+rouge_score
+
+torchtext
+-e git+git://github.com/clic-lab/newsroom.git#egg=newsroom

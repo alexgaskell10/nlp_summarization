@@ -1,0 +1,117 @@
+# Excluding reference
+
+=====outputs/wref_bert-human_overall_rank_correlation.csv=====
+
+Correlation mean on all data spearman/pearsonr/kendall: [0.5832771  0.60780749 0.52501678]
+
+=====outputs/wref_ROUGE-1-F_overall_rank_correlation.csv=====
+
+Correlation mean on all data spearman/pearsonr/kendall: [0.15448685 0.20564782 0.13540645]
+
+=====outputs/wref_ROUGE-2-F_overall_rank_correlation.csv=====
+
+Correlation mean on all data spearman/pearsonr/kendall: [0.12953493 0.13367452 0.11663695]
+
+=====outputs/wref_ROUGE-L-F_overall_rank_correlation.csv=====
+
+Correlation mean on all data spearman/pearsonr/kendall: [0.14099303 0.13172068 0.12421158]
+
+=====outputs/wref_bert-score_overall_rank_correlation.csv=====
+# roberta-large
+Correlation mean on all data spearman/pearsonr/kendall: [0.28519432 0.29859122 0.25354628]
+
+=====outputs/wref_bleurt_overall_rank_correlation.csv=====
+# bleurt-base-512
+Correlation mean on all data spearman/pearsonr/kendall: [0.22336248 0.24106045 0.1995213 ]
+
+=====outputs/wref_bleurt_overall_rank_correlation.csv=====
+# bleurt-large-512
+Correlation mean on all data spearman/pearsonr/kendall: [0.24609674 0.2735607  0.21619587]
+
+=====outputs/wref_bart-cnn-score_overall_rank_correlation.csv=====
+# facebook/bart-large-cnn
+Correlation mean on all data spearman/pearsonr/kendall: [0.11096445 0.13001115 0.09985766]
+Correlation std on all data spearman/pearsonr/kendall: [0.56253398 0.5780128  0.50148776]
+
+=====outputs/wref_bart-score_overall_rank_correlation.csv=====
+# bart-large
+Correlation mean on all data spearman/pearsonr/kendall: [0.18270163 0.19999223 0.16163043]
+Correlation std on all data spearman/pearsonr/kendall: [0.56001596 0.56960208 0.49824088]
+
+=====learned_eval/outputs/wref_bert-score_overall_rank_correlation.csv=====
+# albert-xxlarge-v2
+Correlation mean on all data spearman/pearsonr/kendall: [0.26791758 0.29105615 0.23186091]
+Correlation std on all data spearman/pearsonr/kendall: [0.53349053 0.54122981 0.48099726]
+
+=====learned_eval/outputs/wref_bert-score_overall_rank_correlation.csv=====
+
+Correlation mean on all data spearman/pearsonr/kendall: [0.29826087 0.3373437  0.26300845]
+Correlation std on all data spearman/pearsonr/kendall: [0.52856697 0.53774364 0.47843092]
+
+=====learned_eval/outputs/wref_bert-score_overall_rank_correlation.csv=====
+# distilroberta-base
+Correlation mean on all data spearman/pearsonr/kendall: [0.17433669 0.18790087 0.15377312]
+Correlation std on all data spearman/pearsonr/kendall: [0.55869677 0.57353123 0.49784438]
+
+=====learned_eval/outputs/wref_bart-score_overall_rank_correlation.csv=====
+# bart-large-mnli
+Correlation mean on all data spearman/pearsonr/kendall: [0.30802721 0.33906844 0.27261215]
+Correlation std on all data spearman/pearsonr/kendall: [0.523267   0.53024819 0.47206922]
+
+=====learned_eval/outputs/wref_bart-score_overall_rank_correlation.csv=====
+# bart-large-xsum
+Correlation mean on all data spearman/pearsonr/kendall: [0.12685678 0.1625161  0.10946682]
+Correlation std on all data spearman/pearsonr/kendall: [0.5704316  0.57443751 0.5099739 ]
+
+=====learned_eval/outputs/wref_bert-score_overall_rank_correlation.csv=====
+# albert-xlarge-v1
+Correlation mean on all data spearman/pearsonr/kendall: [0.24992251 0.29003293 0.21513499]
+Correlation std on all data spearman/pearsonr/kendall: [0.53473329 0.53903129 0.47670986]
+
+=====learned_eval/outputs/wref_bert-score_overall_rank_correlation.csv=====
+# roberta-base
+Correlation mean on all data spearman/pearsonr/kendall: [0.22148546 0.24269909 0.1967162 ]
+Correlation std on all data spearman/pearsonr/kendall: [0.5662033  0.56339711 0.50479515]
+
+=====learned_eval/outputs/wref_bert-score_overall_rank_correlation.csv=====
+# bert-large-uncased
+Correlation mean on all data spearman/pearsonr/kendall: [0.22702716 0.25316405 0.19788859]
+Correlation std on all data spearman/pearsonr/kendall: [0.55377687 0.55422911 0.4978388 ]
+
+=====learned_eval/outputs/wref_bert-avg-score_overall_rank_correlation.csv=====
+# roberta-large, albert-xxlarge-v2, bart-large-mnli
+Correlation mean on all data spearman/pearsonr/kendall: [0.29903274 0.32377915 0.26219574]
+Correlation std on all data spearman/pearsonr/kendall: [0.52433515 0.53010647 0.47380582]
+
+=====learned_eval/outputs/wref_mover-1_overall_rank_correlation.csv=====
+# mover-1
+Correlation mean on all data spearman/pearsonr/kendall: [0.23559985 0.27369653 0.20314672]
+Correlation std on all data spearman/pearsonr/kendall: [0.53945492 0.5490581  0.48210361]
+
+=====learned_eval/outputs/wref_mover-2_overall_rank_correlation.csv=====
+# mover-2
+Correlation mean on all data spearman/pearsonr/kendall: [0.24154542 0.28220705 0.20862291]
+Correlation std on all data spearman/pearsonr/kendall: [0.53599145 0.54579835 0.48067076]
+
+
+# Including reference
+
+=====outputs/wref_bert-score_overall_rank_correlation.csv=====
+
+Correlation mean on all data spearman/pearsonr/kendall: [0.35621546 0.31474822 0.30797584]
+
+=====outputs/wref_bert-human_overall_rank_correlation.csv=====
+
+Correlation mean on all data spearman/pearsonr/kendall: [0.58259672 0.60854393 0.51103262]
+
+=====outputs/wref_ROUGE-1-F_overall_rank_correlation.csv=====
+
+Correlation mean on all data spearman/pearsonr/kendall: [0.27760635 0.30122165 0.23707489]
+
+=====outputs/wref_ROUGE-2-F_overall_rank_correlation.csv=====
+
+Correlation mean on all data spearman/pearsonr/kendall: [0.26015663 0.27706448 0.22535638]
+
+=====outputs/wref_ROUGE-L-F_overall_rank_correlation.csv=====
+
+Correlation mean on all data spearman/pearsonr/kendall: [0.26800486 0.27759301 0.23035797]

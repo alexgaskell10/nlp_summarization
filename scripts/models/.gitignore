@@ -1,0 +1,6 @@
+__pycache__
+bart-*
+lightning_logs
+wandb/*
+submit*
+hpc_logs

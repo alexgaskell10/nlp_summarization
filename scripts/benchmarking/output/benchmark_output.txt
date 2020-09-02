@@ -1,0 +1,9 @@
+
+../../../datasets/cnn_dm//pegasus/test.hypo
+{"bleurt": -0.21507421385481937, "bertscore": 0.4203732907772064, "bartscore": 0.6129909753799438, "rouge1": 0.43277604915066603, "rouge2": 0.21305939754471193, "rougeLsum": 0.4029779760719336}
+../../../datasets/cnn_dm/bart/test.hypo
+{"bleurt": -0.28735446171645396, "bertscore": 0.39722684025764465, "bartscore": 0.608929455280304, "rouge1": 0.44154306162370566, "rouge2": 0.21135932572864818, "rougeLsum": 0.4102367574155338}
+../../../datasets/cnn_dm/pgn/files/test.hypo
+{"bleurt": -0.33974212372952745, "bertscore": 0.3246152698993683, "bartscore": 0.5538205504417419, "rouge1": 0.36184502146738573, "rouge2": 0.1561712673376084, "rougeLsum": 0.332558799136566}
+../../../datasets/cnn_dm/prophetnet/output/test.hypo
+{"bleurt": -0.26256285982913263, "bertscore": 0.4133513569831848, "bartscore": 0.6243191361427307, "rouge1": 0.44200090736539077, "rouge2": 0.21176335207943103, "rougeLsum": 0.41136349015672113}
