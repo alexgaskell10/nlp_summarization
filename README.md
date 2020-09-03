@@ -4,7 +4,7 @@ This code accompanies the MSc thesis: On the Summarization and Evaluation of Lon
 
 ## Prerequisites ##
 ### Environment ###
-```python >= 3.6; GPU >= 12Gb```
+```python >= 3.6, GPU >= 12Gb```, tested on Linux only
 1. Create and activate a new virtual environment
 2. cd to the root of this directory
 3. Run the following command to install packages: ```sh install_packages.sh```
