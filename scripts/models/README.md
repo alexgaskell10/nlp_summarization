@@ -2,4 +2,4 @@
 
 The code in this folder is primarily based on the seq2seq modeling framework from [huggingface](https://github.com/huggingface/transformers/tree/master/examples/seq2seq). 
 
-```finetune.py``` is the entry point to running the scripts here. Some sample shell scripts are provided in ```sh_scripts```. These exhibit how to finetune the models and run eval using the test set.
+```finetune.py``` is the entry point to running the scripts here. Some sample shell scripts are provided in ```sh_scripts```. These exhibit how to finetune the models and run eval using the test set. This code allows the use of BART, Longformer Encoder Decoder (LED) and the Reformer Encoder Decoder (RED) on summarization tasks.
