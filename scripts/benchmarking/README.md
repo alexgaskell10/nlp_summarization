@@ -6,3 +6,4 @@ The files have the following content:
 - ```adversarial.py```: Corrupt a set of summaries and assess the performance of the metrics at discriminating between corrupted and uncorrupted summaries
 - ```benchmark.py```: File for performing evaluation of summaries. Check main README for full usage. Example shell script is in ```sh_scripts```
 - ```resource.py```: utils
+- The remaining folders contain auxilliary code for running the above files
