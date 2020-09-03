@@ -1,3 +1,6 @@
+### This code is based on transformers/examples/seq2seq/finetune.py ###
+### Link: https://github.com/huggingface/transformers/tree/master/examples/seq2seq ###
+
 import argparse
 import glob
 import logging

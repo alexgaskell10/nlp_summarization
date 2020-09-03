@@ -4,3 +4,5 @@ lightning_logs
 wandb/*
 submit*
 hpc_logs
+hpc_runners
+runners
