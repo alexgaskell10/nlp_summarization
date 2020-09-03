@@ -5,4 +5,4 @@ Useful for 2 purposes:
 2. Demo of the code pipeline
   - I.e. finetuning a model, produce test summaries, evaluate the summaries
   
-Usage: ```sh 
+Usage: ```sh run_example.sh```
