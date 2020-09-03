@@ -14,8 +14,6 @@ import argparse
 from datetime import datetime
 import time
 
-from resources import BLEURT_DIR
-
 from bert_score import BERTScorer
 from learned_eval.helpers.data_helpers import text_normalization
 from bleurt import score
@@ -28,6 +26,10 @@ ALL_METRICS = MODEL_METRICS + ROUGE_METRICS
 
 
 class Benchmarker:
+    ''' Class to perform evaluation on the generated summaries. This 
+        class loads the hypothesis and reference summaries, computes the
+        scores for each metric for each summary and saves the results.
+    '''
     def __init__(self, args):
         self.args = args
         self.refs_paths = args.refs_paths
@@ -56,12 +58,13 @@ class Benchmarker:
             self.metrics = [args.metric]
 
     def load_summs(self, HYPS_PATH, REFS_PATH, trim=False):
+        ''' Load the summaries from the provided file paths '''
         if 'prophetnet' in HYPS_PATH:
             self.refs = [line.strip().lower() for line in open(REFS_PATH, encoding='utf-8')]
             self.hyps = [line.strip().lower() for line in open(HYPS_PATH, encoding='utf-8')]
         else:
-            self.refs = [line.strip() for line in open(REFS_PATH, encoding='utf-8')][:10]
-            self.hyps = [line.strip() for line in open(HYPS_PATH, encoding='utf-8')][:10]
+            self.refs = [line.strip() for line in open(REFS_PATH, encoding='utf-8')]
+            self.hyps = [line.strip() for line in open(HYPS_PATH, encoding='utf-8')]
 
         if trim:
             self.refs = self.refs[:len(self.hyps)]
@@ -76,6 +79,7 @@ class Benchmarker:
             self.df_scores = pd.concat([self.df_scores, pd.DataFrame(tmp)])
 
     def save_as_dict(self):
+        ''' Reformat the data as a dictionary and save to files '''
         df = self.df_scores
 
         column_ordering = ["mover-1", "mover-2", "bleurt", "bertscore", "bartscore", "rouge1", "rouge2", "rougeL", "rougeLsum"]
@@ -89,6 +93,9 @@ class Benchmarker:
             self.write_to_file()
 
     def run_bleurt(self):
+        ''' Computes the BLEURT scores between the set of hypothesis 
+            and reference summaries.
+        '''
         print('\n===== BLEURT =====\n')
         sys.argv = [sys.argv[0]]
         checkpoint = self.bleurt_model
@@ -105,6 +112,9 @@ class Benchmarker:
         torch.cuda.empty_cache()
 
     def run_bertscore(self):
+        ''' Computes the BERTScore score between the set of hypothesis 
+            and reference summaries.
+        '''
         print('\n===== BERTScore =====\n')
         bertscore = BERTScorer(lang="en", rescale_with_baseline=True, model_type=self.bertscore_model)
 
@@ -119,6 +129,9 @@ class Benchmarker:
         torch.cuda.empty_cache()
 
     def run_bartscore(self):
+        ''' Computes the BARTScore score between the set of hypothesis 
+            and reference summaries.
+        '''
         print('\n===== BARTScore =====\n')
         bartscore = BERTScorer(lang="en", model_type=self.bartscore_model, num_layers=12)
 
@@ -133,6 +146,9 @@ class Benchmarker:
         torch.cuda.empty_cache()
 
     def run_moverscore(self):
+        ''' Computes the mover-1 and mover-2 scores between the set of hypothesis 
+            and reference summaries.
+        '''
         print('\n===== Moverscore =====\n')
         from moverscore import get_idf_dict, word_mover_score
 
@@ -163,6 +179,9 @@ class Benchmarker:
         torch.cuda.empty_cache()
 
     def run_rouge(self):
+        ''' Computes the ROUGE score between the set of hypothesis 
+            and reference summaries.
+        '''
         print('\n===== ROUGE =====\n')
         rouge = rouge_scorer.RougeScorer(self.rouge_metrics, use_stemmer=True)
 
@@ -184,6 +203,10 @@ class Benchmarker:
             self.save_temp_csv()
 
     def write_to_file(self):
+        ''' Writes the raw scores and the summary scores to seperate files.
+            The scores from each set of summaries are appended in dictionary
+            format to the file if it exists.
+        '''
         with open(self.outfile, 'a+') as f:
             json.dump(self.model_scores, f)
             f.write('\n')
@@ -193,6 +216,7 @@ class Benchmarker:
             f.write('\n')
 
     def run_eval(self):
+        ''' Main method running the eval loop '''
         self.df_scores = pd.DataFrame(columns=['hyps_path'] + self.metrics)
 
         if any('mover' in m for m in self.metrics):

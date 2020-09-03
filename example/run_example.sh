@@ -18,6 +18,7 @@ cd $CWD
 ### 3. Run eval on test summaries ###
 SUMS_DIR=$CWD/example_outdir
 OUT_DIR=$CWD/eval_output
+mkdir $OUT_DIR
 cd ../scripts/benchmarking
 python benchmark.py \
     --metric all \
@@ -25,7 +26,6 @@ python benchmark.py \
     --outdir $OUT_DIR \
     --run_eval
 cd $CWD
-rm -f eval_output/*.csv 
 
 # This should produce a dict in ./eval_output/eval_output.txt and the metric scores should match below:
 # "mover-1": [0.1659062701482688, 0.14772925661712547], 

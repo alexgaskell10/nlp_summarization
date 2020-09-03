@@ -1,5 +1,3 @@
-## . /vol/bitbucket/aeg19/.envs/benchmark/bin/activate
-
 import os
 from tqdm import tqdm
 from math import ceil
@@ -7,19 +5,20 @@ from math import ceil
 import torch
 from transformers import pipeline
 
-# SUMMS_PATH = '/vol/bitbucket/aeg19/datasets/adversarial/cnn_dm/test.hypo'
-# OUT_DIR = '/vol/bitbucket/aeg19/datasets/adversarial/cnn_dm/'
-SUMMS_PATH = '/vol/bitbucket/aeg19/datasets/adversarial/pubmed/test.hypo'
-OUT_DIR = '/vol/bitbucket/aeg19/datasets/adversarial/pubmed/'
+SUMMS_PATH = # Set here
+OUT_DIR = # Set here
 
 class SummaryCorruptor:
-    ''' Abstract class defining generic methods '''
+    ''' Abstract corruptor class. This class defines generic methods and the
+        child classes define the specific types of corruptions.
+    '''
     def __init__(self):
         self.chunk_len = 10
 
         self.run()
 
     def run(self):
+        ''' Main method '''
         self.load_lines()
         self.preprocess()
         self.corrupt()
@@ -33,6 +32,11 @@ class SummaryCorruptor:
         open(self.outfile, 'w').writelines([l.strip() for l in self.outputs])
 
     def preprocess(self):
+        ''' Tokenizes based on spaces and splits the sequence into chunks of
+            length self.chunk_len. This makes it easier to perform the 
+            subsequent corruption and ensures it is distributed throughout
+            the summary
+        '''
         self.masked, self.txt_lens = [], []
         for article in self.txt:
             split_article = article.split(' ')
@@ -46,6 +50,7 @@ class SummaryCorruptor:
         self.inputs = [' '.join(m) for m in self.masked]
 
     def postprocess(self):
+        ''' Joins sequence into string so it can be written to file '''
         self.outputs = []
         index = 0
         for txt_len in self.txt_lens:
@@ -54,7 +59,10 @@ class SummaryCorruptor:
 
 
 class BERTMaskFiller(SummaryCorruptor):
-    ''' Masks tokens and uses pre-trained BERT to in-fill '''
+    ''' Class performing BERT Mask-filling.
+        This masks random tokens in the sumamry and uses a 
+        pre-trained BERT to in-fill these.
+    '''
     def __init__(self):
         self.outfile = os.path.join(OUT_DIR, 'masked.txt')
         self.nlp = pipeline("fill-mask", device=0, model='distilroberta-base')
@@ -79,6 +87,9 @@ class BERTMaskFiller(SummaryCorruptor):
 
 
 class WordDropper(SummaryCorruptor):
+    ''' Class performing random word-dropping. This drops a token from
+        each chunk
+    '''
     def __init__(self):
         self.MASK = '<MASK>'
         self.outfile = os.path.join(OUT_DIR, 'dropped.txt')
@@ -97,7 +108,9 @@ class WordDropper(SummaryCorruptor):
 
 
 class WordPermuter(SummaryCorruptor):
-    ''' Switch the ordering of two adjacent tokens for each chunk '''
+    ''' Class performing random word permutation.
+        This switched the ordering of two adjacent tokens for each chunk
+    '''
     def __init__(self):
         self.outfile = os.path.join(OUT_DIR, 'permuted.txt')
         self.MASK = '<MASK>'
@@ -123,7 +136,84 @@ class WordPermuter(SummaryCorruptor):
             self.corrupted_outputs.append(' '.join(tokens))
 
 
+class AdversarialAnalyzer:
+    ''' Class to determine the accuracy of each metric on the corruption tasks '''
+    def __init__(self):
+        self.out_dir_orig = OUT_DIR
+        self.out_dir = OUT_DIR
+        self.raw_scores_path = 
+        self.raw_scores_path = os.path.join(self.out_dir_orig, 'eval_output_raw.txt')
+        self.metrics = ['bleurt', 'mover-1', 'mover-2', 'bertscore', 'bartscore', 
+                            'rouge1', 'rouge2', 'rougeL', 'rougeLsum']
+        self.adversarial_test()
+
+    def load_raw_scores_from_file(self):
+        ''' Loads the saved scores into a pd dataframe '''
+        self.raw_scores = pd.DataFrame(columns=['hyps_path'] + self.metrics)
+        scores = [eval(line) for line in open(self.raw_scores_path, 'r')]
+        for score in scores:
+            if score['hyps_path'] not in self.raw_scores['hyps_path'].tolist():
+                score['hyps_path'] = [score['hyps_path']] * len(score[self.metrics[0]])
+                temp_df = pd.DataFrame(score)
+                self.raw_scores = pd.concat([self.raw_scores, temp_df], ignore_index=True)
+
+    def adversarial_test(self):
+        ''' Computes the score per metric on the corruption tasks.
+            These are saved to file and printed as output table
+        '''
+        args = {
+            'pubmed': {
+                'paths': {
+                    'Dropped': # Add path to corrupted summaries here,
+                    'Masked': # Add path to corrupted summaries here,
+                    'Permuted': # Add path to corrupted summaries here,
+                },
+                'orig': # Add path to original summaries here,
+            },
+            'cnn_dm': {
+                'paths': {
+                    'Dropped': # Add path to corrupted summaries here, 
+                    'Masked': # Add path to corrupted summaries here,
+                    'Permuted': # Add path to corrupted summaries here,
+                },
+                'orig': # Add path to original summaries here,
+            },
+        }
+        outfile = os.path.join(self.out_dir_orig, 'adversarial_results.txt')
+        self.load_raw_scores_from_file()
+        test_output = {}
+        for name, path in args['cnn_dm']['paths'].items():
+            task_output = {}
+            for metric in self.metrics:
+                orig_scores = self.raw_scores[metric].loc[self.raw_scores.hyps_path == args['cnn_dm']['orig']].tolist()
+                corrupted_scores = self.raw_scores[metric].loc[self.raw_scores.hyps_path == path].tolist()
+                assert len(orig_scores) == len(corrupted_scores)
+                preds = [old > new for old, new in zip(orig_scores, corrupted_scores)]
+                p_hat = sum(preds) / len(preds)
+                std = (p_hat * (1-p_hat)) / len(orig_scores)**0.5
+                task_output[metric] = [p_hat, std]
+            
+            test_output[name] = task_output
+
+        # save to file
+        with open(outfile, 'w') as f:
+            json.dump(test_output, f, indent=2)
+
+        # print as output table
+        cols = ['Metrics'] + list(args['cnn_dm']['paths'].keys())
+        rows = test_output[cols[1]].keys()
+        results = []
+        for row in rows:
+            p_data = [row] + [round(test_output[col][row][0], 3) for col in cols[1:]]
+            results.append(p_data)
+
+        df_results = pd.DataFrame(results, columns=cols).sort_values('Masked', ascending=False)
+        print(df_results.to_string(index=False))
+
+
 if __name__ == '__main__':
     BERTMaskFiller()
     WordDropper()
     WordPermuter()
+
+    # AdversarialAnalyzer()

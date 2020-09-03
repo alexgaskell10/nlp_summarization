@@ -2,7 +2,7 @@ import os
 
 LANGUAGE = 'english'
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) # os.path.abspath('.')
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.join(ROOT_DIR, 'learned_eval')
 DATA_DIR = os.path.join(BASE_DIR, 'data', 'cdm')
 RAW_DATA_DIR = os.path.join(DATA_DIR, 'raw_json')
@@ -24,10 +24,6 @@ ABS_MODEL_DIR = os.path.join(BASE_DIR, 'fast_abs_rl', 'pretrained', 'abstractor'
 FAST_ABS_RL = os.path.join(BASE_DIR, 'fast_abs_rl')
 RUNS_DIR = os.path.join(BASE_DIR, 'runs')
 MODEL_WEIGHT_DIR = os.path.join(BASE_DIR,'trained_models')
-
-import sys
-BLEURT_DIR = os.path.join(ROOT_DIR, '../../bleurt')
-sys.path.append(BLEURT_DIR)
 
 QQP_DATA_PATH = os.path.join(ROOT_DIR, 'qqp_train.csv')
 QQP_OUT_PATH = os.path.join(ROOT_DIR, 'qqp_output.csv')

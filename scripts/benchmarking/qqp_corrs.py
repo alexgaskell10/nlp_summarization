@@ -1,3 +1,6 @@
+### This code is based on the code from summary-reward-no-reference/compare_reward.py file ###
+### Link: https://github.com/yg211/summary-reward-no-reference/blob/master/compare_reward.py ###
+
 import numpy as np
 import pandas as pd
 
@@ -9,7 +12,7 @@ import argparse
 import csv
 
 from learned_eval.scorer.auto_metrics.rouge.rouge import RougeScorer
-from resources import ROUGE_DIR, BASE_DIR, MODEL_WEIGHT_DIR, BLEURT_DIR, QQP_DATA_PATH, QQP_OUT_PATH
+from resources import ROUGE_DIR, BASE_DIR, MODEL_WEIGHT_DIR, QQP_DATA_PATH, QQP_OUT_PATH
 
 from bert_score import BERTScorer
 from bleurt import score
@@ -36,7 +39,7 @@ def get_scores(nrows, metrics=None):
             scorer = BERTScorer(lang="en", model_type="facebook/bart-large-mnli", num_layers=12)
             _, _, scores = scorer.score(df.question1.tolist(), df.question2.tolist())
         elif m == 'bleurt':
-            checkpoint = os.path.join(BLEURT_DIR, "bleurt/bleurt-large-512-ckpt")
+            checkpoint = "bleurt-large-512"
             scorer = score.BleurtScorer(checkpoint)
             scores = scorer.score(df.question1, df.question2, batch_size=50)
         elif m.startswith('mover'):
