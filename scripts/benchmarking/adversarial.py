@@ -5,15 +5,14 @@ from math import ceil
 import torch
 from transformers import pipeline
 
-SUMMS_PATH = # Set here
-OUT_DIR = # Set here
-
 class SummaryCorruptor:
     ''' Abstract corruptor class. This class defines generic methods and the
         child classes define the specific types of corruptions.
     '''
-    def __init__(self):
-        self.chunk_len = 10
+    def __init__(self, summs_path, out_dir, chunk_len):
+        self.chunk_len = chunk_len
+        self.SUMMS_PATH = summs_path
+        self.OUT_DIR = out_dir
 
         self.run()
 
@@ -26,10 +25,12 @@ class SummaryCorruptor:
         self.save_lines()
 
     def load_lines(self):
-        self.txt = [line.strip() for line in open(SUMMS_PATH, encoding='utf-8')]
+        self.txt = [line.strip() for line in open(self.SUMMS_PATH, encoding='utf-8')]
 
     def save_lines(self):
-        open(self.outfile, 'w').writelines([l.strip() for l in self.outputs])
+        with open(self.outfile, 'w') as f:
+            for line in [l.strip() for l in self.outputs]:
+                f.write(line + '\n')
 
     def preprocess(self):
         ''' Tokenizes based on spaces and splits the sequence into chunks of
@@ -60,15 +61,15 @@ class SummaryCorruptor:
 
 class BERTMaskFiller(SummaryCorruptor):
     ''' Class performing BERT Mask-filling.
-        This masks random tokens in the sumamry and uses a 
+        This masks random tokens in the summary and uses a 
         pre-trained BERT to in-fill these.
     '''
-    def __init__(self):
-        self.outfile = os.path.join(OUT_DIR, 'masked.txt')
+    def __init__(self, summs_path, out_dir, chunk_len=10):
+        self.outfile = os.path.join(out_dir, 'masked.txt')
         self.nlp = pipeline("fill-mask", device=0, model='distilroberta-base')
         self.MASK = self.nlp.tokenizer.mask_token
         self.bert_chunksize = 128
-        super().__init__()
+        super().__init__(summs_path, out_dir, chunk_len)
 
     def preprocessing_step(self, chunks):
         ''' Mask random word in chunk '''
@@ -90,10 +91,10 @@ class WordDropper(SummaryCorruptor):
     ''' Class performing random word-dropping. This drops a token from
         each chunk
     '''
-    def __init__(self):
+    def __init__(self, summs_path, out_dir, chunk_len=10):
         self.MASK = '<MASK>'
-        self.outfile = os.path.join(OUT_DIR, 'dropped.txt')
-        super().__init__()
+        self.outfile = os.path.join(out_dir, 'dropped.txt')
+        super().__init__(summs_path, out_dir, chunk_len)
 
     def preprocessing_step(self, chunks):
         ''' Mask random word in chunk '''
@@ -111,10 +112,10 @@ class WordPermuter(SummaryCorruptor):
     ''' Class performing random word permutation.
         This switched the ordering of two adjacent tokens for each chunk
     '''
-    def __init__(self):
-        self.outfile = os.path.join(OUT_DIR, 'permuted.txt')
+    def __init__(self, summs_path, out_dir, chunk_len=10):
         self.MASK = '<MASK>'
-        super().__init__()
+        self.outfile = os.path.join(out_dir, 'permuted.txt')
+        super().__init__(summs_path, out_dir, chunk_len)
 
     def preprocessing_step(self, chunks):
         ''' Insert mask token before tokens to be permuted '''
@@ -141,7 +142,6 @@ class AdversarialAnalyzer:
     def __init__(self):
         self.out_dir_orig = OUT_DIR
         self.out_dir = OUT_DIR
-        self.raw_scores_path = 
         self.raw_scores_path = os.path.join(self.out_dir_orig, 'eval_output_raw.txt')
         self.metrics = ['bleurt', 'mover-1', 'mover-2', 'bertscore', 'bartscore', 
                             'rouge1', 'rouge2', 'rougeL', 'rougeLsum']
@@ -161,24 +161,24 @@ class AdversarialAnalyzer:
         ''' Computes the score per metric on the corruption tasks.
             These are saved to file and printed as output table
         '''
-        args = {
-            'pubmed': {
-                'paths': {
-                    'Dropped': # Add path to corrupted summaries here,
-                    'Masked': # Add path to corrupted summaries here,
-                    'Permuted': # Add path to corrupted summaries here,
-                },
-                'orig': # Add path to original summaries here,
-            },
-            'cnn_dm': {
-                'paths': {
-                    'Dropped': # Add path to corrupted summaries here, 
-                    'Masked': # Add path to corrupted summaries here,
-                    'Permuted': # Add path to corrupted summaries here,
-                },
-                'orig': # Add path to original summaries here,
-            },
-        }
+        # args = {
+        #     'pubmed': {
+        #         'paths': {
+        #             'Dropped': # Add path to corrupted summaries here,
+        #             'Masked': # Add path to corrupted summaries here,
+        #             'Permuted': # Add path to corrupted summaries here,
+        #         },
+        #         'orig': # Add path to original summaries here,
+        #     },
+        #     'cnn_dm': {
+        #         'paths': {
+        #             'Dropped': # Add path to corrupted summaries here, 
+        #             'Masked': # Add path to corrupted summaries here,
+        #             'Permuted': # Add path to corrupted summaries here,
+        #         },
+        #         'orig': # Add path to original summaries here,
+        #     },
+        # }
         outfile = os.path.join(self.out_dir_orig, 'adversarial_results.txt')
         self.load_raw_scores_from_file()
         test_output = {}
@@ -211,9 +211,30 @@ class AdversarialAnalyzer:
         print(df_results.to_string(index=False))
 
 
-if __name__ == '__main__':
-    BERTMaskFiller()
-    WordDropper()
-    WordPermuter()
+def main():
+    paths = {
+        'pubmed': {
+            'SUMMS_PATH': '/vol/bitbucket/aeg19/datasets/adversarial/pubmed/variable_corruption/test.hypo',
+            'OUT_DIR': '/vol/bitbucket/aeg19/datasets/adversarial/pubmed/variable_corruption/',
+        },
+        'cnn_dm': {
+            'SUMMS_PATH': '/vol/bitbucket/aeg19/datasets/adversarial/cnn_dm/variable_corruption/test.hypo',
+            'OUT_DIR': '/vol/bitbucket/aeg19/datasets/adversarial/cnn_dm/variable_corruption/',
+        },
+        'exts': ['_8', '_6', '_4']
+    }
 
-    # AdversarialAnalyzer()
+    for dset in ['pubmed', 'cnn_dm']:
+        SUMMS_PATH = paths[dset]['SUMMS_PATH']
+        for ext in paths['exts']:
+            OUT_DIR = os.path.join(paths[dset]['OUT_DIR'], ext)
+            chunk_len = int(ext.replace('_', ''))
+            
+            # Run corrpution
+            BERTMaskFiller(SUMMS_PATH, OUT_DIR, chunk_len)
+            WordDropper(SUMMS_PATH, OUT_DIR, chunk_len)
+            WordPermuter(SUMMS_PATH, OUT_DIR, chunk_len)
+
+
+if __name__ == '__main__':
+    main()

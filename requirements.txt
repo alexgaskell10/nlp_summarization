@@ -22,7 +22,7 @@ configparser==5.0.0
 cssselect==1.1.0
 cycler==0.10.0
 cymem==2.0.3
-dataclasses==0.7
+# dataclasses==0.7
 decorator==4.4.2
 defusedxml==0.6.0
 dill==0.3.2
