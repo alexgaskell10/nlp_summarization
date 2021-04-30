@@ -1,6 +1,6 @@
 # On the Summarization and Evaluation of Long Documents #
 
-This code accompanies the MSc thesis: On the Summarization and Evaluation of Long Documents. This file documents the steps required to finetune a model, generate summaries and then run evaluation on these predictions.
+This file documents the steps required to finetune a model, generate summaries and then run evaluation on these predictions.
 
 ## Prerequisites ##
 ### Environment ###
