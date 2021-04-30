@@ -1414,15 +1414,85 @@ def batch_hists(data, args):
     plt.savefig(args['outfile'])
     plt.clf()
 
+def williams_test(r12, r13, r23, n):
+    """The Williams test (Evan J. Williams. 1959. Regression Analysis, volume 14. Wiley, New York, USA)
+    
+    A test of whether the population correlation r12 equals the population correlation r13.
+    Significant: p < 0.05
+    
+    Arguments:
+        r12 (float): correlation between x1, x2
+        r13 (float): correlation between x1, x3
+        r23 (float): correlation between x2, x3
+        n (int): size of the population
+        
+    Returns:
+        t (float): Williams test result
+        p (float): p-value of t-dist
+    """
+    if r12 < r13:
+        print('r12 should be larger than r13')
+        sys.exit()
+    elif n <= 3:
+        print('n should be larger than 3')
+        sys.exit()
+    else:
+        K = 1 - r12**2 - r13**2 - r23**2 + 2*r12*r13*r23
+        denominator = np.sqrt(2*K*(n-1)/(n-3) + (((r12+r13)**2)/4)*((1-r23)**3))
+        numerator = (r12-r13) * np.sqrt((n-1)*(1+r23))
+        t = numerator / denominator
+        p = 1 - stats.t.cdf(t, df=n-3) # changed to n-3 on 30/11/14
+        return t, p
+
+def get_williams():
+    from scipy.stats import spearmanr, pearsonr, kendalltau
+    root = '/vol/bitbucket/aeg19/nlp_summarization/scripts/benchmarking/learned_eval/outputs/'
+    paths = glob(root+'*.csv')
+    scores = []
+    model_scores = {}
+    for path in paths:
+        metric = path.replace(root+'wref_', '').replace('_overall_rank_correlation.csv', '')
+        df = pd.read_csv(path, header=0)
+        scores.append([
+            metric,
+            spearmanr(df.iloc[:,-1], df.iloc[:,-2])[0],
+            pearsonr(df.iloc[:,-1], df.iloc[:,-2])[0],
+            kendalltau(df.iloc[:,-1], df.iloc[:,-2])[0],
+        ])
+        model_scores[metric] = df.iloc[:, -1].tolist()
+
+    scores.sort(key=lambda x:x[1], reverse=True)
+
+    # Print as latex
+    for row in scores:
+        print(f'{row[0]}\t & {row[1]:.3f} & {row[2]:.3f} & {row[3]:.3f} \\')
+
+
+    for s1 in scores:
+        for s2 in scores:
+            if s1[0] == s2[0]:
+                continue
+
+            r12 = s1[2]
+            r13 = s2[2]
+            try:
+                r23 = pearsonr(model_scores[s1[0]], model_scores[s2[0]])[0]
+            except:
+                print(s1[0], s2[0], len(model_scores[s1[0]]), len(model_scores[s2[0]]))
+            if r12 <= r13:
+                continue
+            t_stat = williams_test(r12, r13, r23, len(model_scores[s1[0]]))
+
+            print(s1[0], s2[0], t_stat[1], t_stat[1] < 0.05, t_stat[1] < 0.01)
 
 if __name__ == '__main__':
     # Analyzer()
     # Plotter()
     # RandomStartAnalyzer()
-    RandomStartPlotter()
+    # RandomStartPlotter()
     # RandomStartLoader()
     # MetricsPlotter()
     # AdversarialAnalyzer()
     # SummaryMetricAnalyzer()
+    get_williams()
 
-''' env: led '''
